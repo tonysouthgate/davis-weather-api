@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/**/*.js": {
+    "api/davis-weather.js": {
       "runtime": "@vercel/node"
     }
   }
