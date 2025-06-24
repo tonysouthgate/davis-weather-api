@@ -1,33 +1,33 @@
-// api/davis-weather.js
-const fetch = require('node-fetch');
-
-module.exports = async (req, res) => {
-  // Enable CORS
+export default async function handler(req, res) {
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // Handle preflight request
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
+  // Only allow GET requests
   if (req.method !== 'GET') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    console.log('Davis API function called');
+    console.log('Davis weather function executing...');
     
+    // Davis API credentials
     const API_KEY = 'bvgu5bfmm99lvfrqhlffy3l8pmpbq26v';
     const API_SECRET = 'lhcttqhmgxipv3zy8xgupadhbgowwcs1';
     const STATION_ID = '92193';
 
+    // WeatherLink API URL
     const apiUrl = `https://api.weatherlink.com/v2/current/${STATION_ID}?api-key=${API_KEY}`;
     
-    console.log('Fetching from WeatherLink API...');
+    console.log('Making request to WeatherLink API...');
     
+    // Make request to WeatherLink API
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
       }
     });
 
-    console.log('WeatherLink response status:', response.status);
+    console.log('WeatherLink API response status:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -46,9 +46,10 @@ module.exports = async (req, res) => {
     }
 
     const data = await response.json();
-    console.log('Successfully fetched weather data, sensors:', data.sensors ? data.sensors.length : 0);
+    console.log('Successfully retrieved weather data');
     
-    res.status(200).json({
+    // Return successful response
+    return res.status(200).json({
       success: true,
       data: data,
       timestamp: new Date().toISOString(),
@@ -56,13 +57,14 @@ module.exports = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error in Davis API function:', error.message);
+    console.error('Function error:', error.message);
     
-    res.status(200).json({
+    // Return error response
+    return res.status(200).json({
       success: false,
       error: error.message,
       timestamp: new Date().toISOString(),
       station_id: '92193'
     });
   }
-};
+}
