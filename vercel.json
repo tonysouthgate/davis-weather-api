@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/davis-weather.js": {
-      "runtime": "@vercel/node@18.x"
-    }
-  }
-}
